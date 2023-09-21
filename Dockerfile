@@ -1,11 +1,11 @@
 FROM golang:1.21
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY app/go.mod app/go.sum ./
+COPY /app/go.mod /app/go.sum ./
 RUN go mod download && go mod verify
 
-COPY app .
-RUN go build -v -o /usr/local/bin/app ./...
+COPY /app .
+RUN go build -o bin main.go
 
-CMD ["app"]
+CMD ["/app/bin"]

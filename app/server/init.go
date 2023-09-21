@@ -2,8 +2,11 @@ package server
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
+
+	_ "github.com/lib/pq"
 )
 
 type server struct {
@@ -12,9 +15,9 @@ type server struct {
 }
 
 func initdb() *sql.DB {
-	db, err := sql.Open("postgres", "host=localhost port=5432 user=gleb password=1510 dbname=proj sslmode=disable")
+	db, err := sql.Open("postgres", "postgresql://test:1510@database:5432/test?sslmode=disable")
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	if err := db.Ping(); err != nil {
 		log.Fatal(err)
@@ -30,6 +33,7 @@ func New() *server {
 }
 
 func (s *server) Start() {
-	go log.Fatal(http.ListenAndServe(":8080", s.router))
+	s.db.Exec("CREATE TABLE wegreehtnfd (user_id serial PRIMARY KEY);")
+	log.Fatal(http.ListenAndServe(":8180", s.router))
 	s.Consume()
 }

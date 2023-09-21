@@ -10,5 +10,5 @@ type Test struct {
 }
 
 func main() {
-	go server.New().Start()
+	server.New().Start()
 }
