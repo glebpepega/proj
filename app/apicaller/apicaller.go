@@ -23,6 +23,9 @@ func CallAPI(p *person.Person, url string) (*person.Person, error) {
 	if p.Count == 0 {
 		return nil, fmt.Errorf("invalid name")
 	} else {
+		if len(p.Country) > 0 {
+			p.OriginCountry = p.Country[0].Country_id
+		}
 		return p, nil
 	}
 }

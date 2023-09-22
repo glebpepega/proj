@@ -15,11 +15,10 @@ import (
 
 func (s *server) Consume() {
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:   []string{"localhost:9092", "localhost:9093", "localhost:9094"},
+		Brokers:   []string{"kafka:9092"},
 		Topic:     "FIO",
 		Partition: 0,
 	})
-	r.SetOffset(8)
 
 	validate := validator.New()
 
@@ -27,7 +26,10 @@ func (s *server) Consume() {
 		var person person.Person
 		m, err := r.ReadMessage(context.Background())
 		if err != nil {
-			break
+			if err := r.Close(); err != nil {
+				log.Fatal("failed to close reader:", err)
+			}
+			log.Fatal(err)
 		}
 		fmt.Printf("message at offset %d: %s = %s\n", m.Offset, string(m.Key), string(m.Value))
 		if err := json.Unmarshal(m.Value, &person); err != nil {
@@ -48,17 +50,15 @@ func (s *server) Consume() {
 				producer.FIOFailedInform(err)
 				continue
 			}
-			pUddated, err := apicaller.CallAPI(&person, "https://api.nationalize.io/?name=")
+			pUpdated, err := apicaller.CallAPI(&person, "https://api.nationalize.io/?name=")
 			if err != nil {
 				producer.FIOFailedInform(err)
 				continue
 			} else {
-				s.StoreInDB(pUddated)
+				if err := s.storeInDB(pUpdated); err != nil {
+					log.Fatal(err)
+				}
 			}
 		}
-	}
-
-	if err := r.Close(); err != nil {
-		log.Fatal("failed to close reader:", err)
 	}
 }

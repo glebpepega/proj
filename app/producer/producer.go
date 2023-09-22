@@ -9,7 +9,7 @@ import (
 
 func FIOFailedInform(e error) {
 	w := &kafka.Writer{
-		Addr:  kafka.TCP("localhost:9092", "localhost:9093", "localhost:9094"),
+		Addr:  kafka.TCP("kafka:9092"),
 		Topic: "FIO_FAILED",
 	}
 	err := w.WriteMessages(context.Background(),

@@ -3,12 +3,12 @@ package decoder
 import (
 	"encoding/json"
 	"io"
-	"log"
 )
 
-func DecodeFromJSON(r io.Reader, obj any) {
+func DecodeFromJSON(r io.Reader, obj any) error {
 	d := json.NewDecoder(r)
 	if err := d.Decode(obj); err != nil {
-		log.Println(err)
+		return err
 	}
+	return nil
 }
