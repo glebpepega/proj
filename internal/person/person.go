@@ -3,8 +3,8 @@ package person
 type Person struct {
 	ID            int
 	Count         int
-	Name          string `validate:"required"`
-	Surname       string `validate:"required"`
+	Name          string
+	Surname       string
 	Patronymic    string
 	Age           int
 	Gender        string

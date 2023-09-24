@@ -2,21 +2,21 @@ package apicaller
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
-	"github.com/glebpepega/proj/decoder"
-	"github.com/glebpepega/proj/person"
+	"github.com/glebpepega/proj/internal/decoder"
+	"github.com/glebpepega/proj/internal/person"
+	"github.com/sirupsen/logrus"
 )
 
 func CallAPI(p *person.Person, url string) (*person.Person, error) {
 	resp, err := http.Get(url + p.Name)
 	if err != nil {
-		log.Println(err)
+		return nil, err
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
-			log.Println(err)
+			logrus.Info(err)
 		}
 	}()
 	decoder.DecodeFromJSON(resp.Body, &p)
